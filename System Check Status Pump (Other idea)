@@ -1,0 +1,87 @@
+alias: System Check Status Pump (Other idea)
+sequence:
+  - variables:
+      pr_entiteit: |
+        {{ "pr"+ entiteit }} 
+      pa_entiteit: |
+        {{ "pa"+ entiteit }} 
+    alias: variables
+  - variables:
+      return_info: |
+        {% if (return_running    == "{'value': 'on'}"      ) and
+              (return_status     == "{'value': Active}"  ) and    
+              (return_activated  == "{'value': 'on'}"      ) %}
+           {% set condition = 'OK' %}
+        {% elif (return_running  ==  "{'value': 'off'}"    ) and
+              (return_status     ==  "{'value': 'Active'}" ) and
+              (return_activated  ==  "{'value': 'off'}"    ) %}
+           {% set condition = 'OK' %}  
+        {% elif (return_running  ==  "{'value': 'off'}"    ) and
+              (return_status     ==  "{'value': 'Non Active'}" ) %}
+           {% set condition = 'OK' %}  
+        {% else %}
+           {% set condition = 'KO' %}        
+        {% endif %}
+        {{ {'value': condition } }}     
+    alias: variables
+  - action: script.status_of_entity_v0_1
+    metadata: {}
+    data:
+      id: "{{ pr_entiteit }}"
+    response_variable: return_running
+  - variables:
+      return_running: "{{ return_run.value }}"
+    enabled: false
+  - action: notify.notify
+    metadata: {}
+    data:
+      title: Running
+      message: Code "{{ return_running }}"
+    enabled: true
+  - action: script.status_of_entity_v0_1
+    metadata: {}
+    data:
+      id: "{{ entiteit }}"
+    response_variable: return_status
+  - variables:
+      return_status: "{{ return_stat.value }}"
+    enabled: false
+  - action: notify.notify
+    metadata: {}
+    data:
+      title: Status
+      message: Code "{{ return_status }}"
+    enabled: true
+  - action: script.status_of_entity_v0_1
+    metadata: {}
+    data:
+      id: "{{ pa_entiteit }}"
+    response_variable: return_activated
+  - variables:
+      return_activated: "{{ return_activat.value }}"
+    enabled: false
+  - action: notify.notify
+    metadata: {}
+    data:
+      title: Activated
+      message: Code "{{ return_activated }}"
+    enabled: true
+  - action: notify.notify
+    metadata: {}
+    data:
+      title: Return_info
+      message: Code "{{ return_info }}"
+  - stop: end
+    response_variable: return_info
+description: ""
+fields:
+  entiteit:
+    selector:
+      text: {}
+    name: Entiteit
+    required: true
+    description: Id of entity state to retrieve
+    default: tank_4
+mode: parallel
+max: 10
+icon: mdi:pump
