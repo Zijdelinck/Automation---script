@@ -1,0 +1,45 @@
+alias: Status of Entity v0.1
+sequence:
+  - variables:
+      return_info: |
+        {% if (id == 'tank_1') %}
+          {% set condition = 'on' %}
+        {% elif (id == 'tank_2') %}
+          {% set condition = 'off' %}
+        {% elif (id == 'tank_3') %}
+          {% set condition = 'off' %} 
+        {% elif (id == 'tank_4') %}
+          {% set condition = 'on' %}   
+
+        {% elif (id == 'patank_1') %}
+          {% set condition = 'Active' %}  
+        {% elif (id == 'patank_2') %}
+          {% set condition = 'Active' %}  
+        {% elif (id == 'patank_3') %}
+          {% set condition = 'Non Active' %}  
+        {% elif (id == 'patank_4') %}
+          {% set condition = 'Active' %}  
+
+        {% elif (id == 'prtank_1') %}
+          {% set condition = 'on' %}   
+        {% elif (id == 'prtank_2') %}
+          {% set condition = 'off' %}   
+        {% elif (id == 'prtank_3') %}
+          {% set condition = 'on' %}   
+        {% elif (id == 'prtank_4') %}
+          {% set condition = 'off' %}   
+        {% endif %}
+        {{ {'value': condition } }}
+    alias: variables
+  - stop: End
+    response_variable: return_info
+fields:
+  id:
+    selector:
+      text: {}
+    name: Id
+    required: true
+    description: Id of entity state to retrieve
+description: ""
+mode: parallel
+max: 50
